@@ -6,7 +6,7 @@ import { createActions } from "./createActions";
 import Keyv, { KeyvHooks } from '@keyvhq/core'
 import KeyvFile from "keyv-file";
 import memoize from "@keyvhq/memoize"
-import { AUTO_PLAYWRIGHT_DEBUG, OPEN_AI_MODEL } from "./config";
+import { AUTO_PLAYWRIGHT_DEBUG, OPEN_AI_MODEL, AUTO_PLAYWRIGHT_MODEL_URL } from "./config";
 
 const storage = new KeyvFile({
   filename: 'local.json'
@@ -29,7 +29,7 @@ export const baseCompleteTask = async (
   task: TaskMessage
 ): Promise<TaskResult> => {
   console.log(task.options)
-  const openai = new OpenAI({ apiKey: task.options?.openaiApiKey });
+  const openai = new OpenAI({ apiKey: task.options?.openaiApiKey, baseURL: AUTO_PLAYWRIGHT_MODEL_URL });
 
   let lastFunctionResult: null | { errorMessage: string } | { query: string } =
     null;

@@ -109,6 +109,21 @@ const options = {
 auto("<your prompt>", { page, test }, options);
 ```
 
+## .env File
+You can create a .env file that contains the following options.
+MODEL_URL is for supporting local llama instance or other local model that supports the OpenAI SDK.
+
+* `OPENAI_API_KEY="API_KEY"`
+* `AUTO_PLAYWRIGHT_DEBUG="true"`
+* `OPEN_AI_MODEL="gpt-3.5-turbo"`
+* `AUTO_PLAYWRIGHT_MODEL_URL: 'http://localhost:11434/v1'`
+
+## To Do
+1. Make it so that we only cache OpenAI calls that pass playwright test by default, with option to enable caching of *all* calls.
+2. Enhance user ability to prune and add to cache by defalt.
+3. Create ability for user to set up OpenAI cached calls to be test/page specific.
+4. Command to clean cache (npm run clean-cache ?)
+
 ## Supported Actions & Return Values
 
 Depending on the `type` of action (inferred by the `auto` function), there are different behaviors and return types.
@@ -183,6 +198,10 @@ Adding new actions is easy: just update the `functions` in [`src/completeTask.ts
 ## Pricing
 
 This library is free. However, there are costs associated with using OpenAI. You can find more information about pricing here: https://openai.com/pricing/.
+
+### Caching
+By default, all OpenAI calls are cached to `local.json`. The cache key is the exact page DOM and request made. This cache will prevent duplicate successful OpenAI calls from being passed in.
+
 
 <details>
   <summary>Example</summary>

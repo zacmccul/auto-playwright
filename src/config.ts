@@ -10,5 +10,6 @@ console.log(`dotenv options: ${JSON.stringify(dotenv.config())}`)
 export const AUTO_PLAYWRIGHT_DEBUG = process.env.AUTO_PLAYWRIGHT_DEBUG
 export const OPENAI_API_KEY = process.env.OPENAI_API_KEY
 export const OPEN_AI_MODEL = process.env.OPEN_AI_MODEL ?? "gpt-3.5-turbo"
+export const AUTO_PLAYWRIGHT_MODEL_URL = process.env.AUTO_PLAYWRIGHT_MODEL_URL
 
 console.log(`OpenAI API Key: ${OPENAI_API_KEY}`)
