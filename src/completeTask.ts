@@ -3,12 +3,32 @@ import { type Page, TaskMessage, TaskResult } from "./types";
 import { prompt } from "./prompt";
 import { createActions } from "./createActions";
 
-const defaultDebug = process.env.AUTO_PLAYWRIGHT_DEBUG === "true";
+import Keyv, { KeyvHooks } from '@keyvhq/core'
+import KeyvFile from "keyv-file";
+import memoize from "@keyvhq/memoize"
+import { AUTO_PLAYWRIGHT_DEBUG, OPEN_AI_MODEL } from "./config";
 
-export const completeTask = async (
+const storage = new KeyvFile({
+  filename: 'local.json'
+})
+
+// not sure how to fix this
+const cacheOptions: Keyv.Options<any> = {
+  store: storage as unknown as Keyv.Store<any>,
+}
+
+const cache = new Keyv(cacheOptions)
+
+
+const defaultDebug = AUTO_PLAYWRIGHT_DEBUG === "true";
+
+console.log(`defaultDebug: ${defaultDebug}`)
+
+export const baseCompleteTask = async (
   page: Page,
   task: TaskMessage
 ): Promise<TaskResult> => {
+  console.log(task.options)
   const openai = new OpenAI({ apiKey: task.options?.openaiApiKey });
 
   let lastFunctionResult: null | { errorMessage: string } | { query: string } =
@@ -17,10 +37,11 @@ export const completeTask = async (
   const actions = createActions(page);
 
   const debug = task.options?.debug ?? defaultDebug;
+  console.log(`debug: ${debug}`)
 
   const runner = openai.beta.chat.completions
     .runFunctions({
-      model: task.options?.model ?? "gpt-4-1106-preview",
+      model: task.options?.model ?? OPEN_AI_MODEL,
       messages: [{ role: "user", content: prompt(task) }],
       functions: Object.values(actions),
     })
@@ -53,3 +74,7 @@ export const completeTask = async (
 
   return lastFunctionResult;
 };
+
+export const completeTask = memoize(baseCompleteTask, cache, {
+  key: (page: Page, task: TaskMessage) => `${task.snapshot.dom}-${task.task}`,
+})

@@ -1,7 +1,11 @@
 {
   "dependencies": {
     "@hono/node-server": "^1.2.0",
+    "@keyvhq/core": "^2.1.1",
+    "@keyvhq/memoize": "^2.1.1",
+    "dotenv": "^16.4.5",
     "hono": "^3.9.2",
+    "keyv-file": "^0.3.1",
     "openai": "^4.17.3",
     "sanitize-html": "^2.11.0",
     "zod": "^3.22.4"
@@ -40,7 +44,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.39.0",
-    "@types/node": "^20.2.5",
+    "@types/node": "^20.12.12",
     "@types/sanitize-html": "^2.9.4",
     "knip": "^2.41.0",
     "prettier": "^2.8.8",

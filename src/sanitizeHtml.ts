@@ -1,4 +1,4 @@
-import * as sanitize from "sanitize-html";
+import sanitize, { defaults } from "sanitize-html";
 
 /**
  * The reason for sanitization is because OpenAI does not need all of the HTML tags
@@ -18,7 +18,7 @@ export const sanitizeHtml = (subject: string) => {
     //
     // I don't see a need for this to be configurable at the moment,
     // as it already covers all the layout tags, but we can revisit this if necessary.
-    allowedTags: sanitize.defaults.allowedTags.concat([
+    allowedTags: defaults.allowedTags.concat([
       "button",
       "form",
       "img",

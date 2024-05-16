@@ -1,4 +1,4 @@
-import { MAX_TASK_CHARS } from "./config";
+import { MAX_TASK_CHARS, OPENAI_API_KEY, OPEN_AI_MODEL } from "./config";
 import { type Page, type Test, StepOptions } from "./types";
 import { completeTask } from "./completeTask";
 import { UnimplementedError } from "./errors";
@@ -54,13 +54,11 @@ async function runTask(
   const result = await completeTask(page, {
     task,
     snapshot: await getSnapshot(page),
-    options: options
-      ? {
-          model: options.model ?? "gpt-4-1106-preview",
-          debug: options.debug ?? false,
-          openaiApiKey: options.openaiApiKey,
+    options:  {
+          model: options?.model ?? OPEN_AI_MODEL,
+          debug: options?.debug ?? true,
+          openaiApiKey: options?.openaiApiKey ?? OPENAI_API_KEY,
         }
-      : undefined,
   });
   return result;
 }
