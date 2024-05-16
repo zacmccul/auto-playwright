@@ -1,4 +1,4 @@
-import { MAX_TASK_CHARS, OPENAI_API_KEY, OPEN_AI_MODEL } from "./config";
+import { MAX_TASK_CHARS, OPENAI_API_KEY, OPENAI_MODEL } from "./config";
 import { type Page, type Test, StepOptions } from "./types";
 import { completeTask } from "./completeTask";
 import { UnimplementedError } from "./errors";
@@ -55,9 +55,9 @@ async function runTask(
     task,
     snapshot: await getSnapshot(page),
     options:  {
-          model: options?.model ?? OPEN_AI_MODEL,
+          model: options?.model ?? OPENAI_MODEL,
           debug: options?.debug ?? true,
-          openaiApiKey: options?.openaiApiKey ?? OPENAI_API_KEY,
+          //openaiApiKey: options?.openaiApiKey ?? OPENAI_API_KEY,
         }
   });
   return result;

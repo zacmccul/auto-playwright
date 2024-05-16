@@ -115,14 +115,16 @@ MODEL_URL is for supporting local llama instance or other local model that suppo
 
 * `OPENAI_API_KEY="API_KEY"`
 * `AUTO_PLAYWRIGHT_DEBUG="true"`
-* `OPEN_AI_MODEL="gpt-3.5-turbo"`
-* `AUTO_PLAYWRIGHT_MODEL_URL: 'http://localhost:11434/v1'`
+* `OPENAI_MODEL="gpt-3.5-turbo"`
+* `AUTO_PLAYWRIGHT_MODEL_URL: "http://localhost:11434/v1"`
+* `OPENAI_API_VERSION: "2023-07-01-preview"`
 
 ## To Do
 1. Make it so that we only cache OpenAI calls that pass playwright test by default, with option to enable caching of *all* calls.
 2. Enhance user ability to prune and add to cache by defalt.
 3. Create ability for user to set up OpenAI cached calls to be test/page specific.
 4. Command to clean cache (npm run clean-cache ?)
+5. Fully clean up removing API direct passing in code instead of env var.
 
 ## Supported Actions & Return Values
 
@@ -202,6 +204,43 @@ This library is free. However, there are costs associated with using OpenAI. You
 ### Caching
 By default, all OpenAI calls are cached to `local.json`. The cache key is the exact page DOM and request made. This cache will prevent duplicate successful OpenAI calls from being passed in.
 
+### Local LLM
+Auto Playwright supports a local LLM when a baseModelURL is passed.
+
+### Setup with Azure OpenAI
+Include the StepOptions type with the values needed for connecting to Azure OpenAI.
+Just set the following ENV variables or in a .env:
+* `AUTO_PLAYWRIGHT_MODEL_URL: https://azure-resource-name.openai.azure.com/openai/deployments/model-deployment-name`
+* `OPENAI_API_VERSION: "2023-07-01-preview"`
+
+```ts
+import { test, expect } from "@playwright/test";
+import { auto } from "auto-playwright";
+import { StepOptions } from "../src/types";
+// const apiKey = "apikey";
+// const resource = "azure-resource-name";
+// const model = "model-deployment-name";
+const options: StepOptions = {
+   model: model,
+   openaiApiKey: apiKey,
+  //  openaiBaseUrl: `https://${resource}.openai.azure.com/openai/deployments/${model}`,
+  //  openaiDefaultQuery: { 'api-version': "2023-07-01-preview" },
+  //  openaiDefaultHeaders: { 'api-key': apiKey }
+};
+test("auto Playwright example", async ({ page }) => {
+  await page.goto("/");
+  // `auto` can query data
+  // In this case, the result is plain-text contents of the header
+  const headerText = await auto("get the header text", { page, test }, options);
+  // `auto` can perform actions
+  // In this case, auto will find and fill in the search text input
+  await auto(`Type "${headerText}" in the search box`, { page, test }, options);
+  // `auto` can assert the state of the website
+  // In this case, the result is a boolean outcome
+  const searchInputHasHeaderText = await auto(`Is the contents of the search box equal to "${headerText}"?`, { page, test }, options);
+  expect(searchInputHasHeaderText).toBe(true);
+});
+```
 
 <details>
   <summary>Example</summary>

@@ -6,7 +6,7 @@ import { createActions } from "./createActions";
 import Keyv, { KeyvHooks } from '@keyvhq/core'
 import KeyvFile from "keyv-file";
 import memoize from "@keyvhq/memoize"
-import { AUTO_PLAYWRIGHT_DEBUG, OPEN_AI_MODEL, AUTO_PLAYWRIGHT_MODEL_URL } from "./config";
+import { AUTO_PLAYWRIGHT_DEBUG, OPENAI_MODEL, AUTO_PLAYWRIGHT_MODEL_URL, OPENAI_API_KEY, OPENAI_API_VERSION } from "./config";
 
 const storage = new KeyvFile({
   filename: 'local.json'
@@ -19,8 +19,18 @@ const cacheOptions: Keyv.Options<any> = {
 
 const cache = new Keyv(cacheOptions)
 
+const azureOptions = {
+  openaiDefaultQuery: { 'api-version': OPENAI_API_VERSION },
+  openaiDefaultHeaders: { 'api-key': OPENAI_API_KEY }
+}
 
-const defaultDebug = AUTO_PLAYWRIGHT_DEBUG === "true";
+const openAIOptions = {
+  apiKey: OPENAI_API_KEY,
+  ...(AUTO_PLAYWRIGHT_MODEL_URL && { baseURL: AUTO_PLAYWRIGHT_MODEL_URL }),
+  ...((AUTO_PLAYWRIGHT_MODEL_URL && AUTO_PLAYWRIGHT_MODEL_URL.includes('azure')) && azureOptions)
+}
+
+const defaultDebug = AUTO_PLAYWRIGHT_DEBUG === "true"
 
 console.log(`defaultDebug: ${defaultDebug}`)
 
@@ -29,7 +39,7 @@ export const baseCompleteTask = async (
   task: TaskMessage
 ): Promise<TaskResult> => {
   console.log(task.options)
-  const openai = new OpenAI({ apiKey: task.options?.openaiApiKey, baseURL: AUTO_PLAYWRIGHT_MODEL_URL });
+  const openai = new OpenAI(openAIOptions);
 
   let lastFunctionResult: null | { errorMessage: string } | { query: string } =
     null;
@@ -41,7 +51,7 @@ export const baseCompleteTask = async (
 
   const runner = openai.beta.chat.completions
     .runFunctions({
-      model: task.options?.model ?? OPEN_AI_MODEL,
+      model: task.options?.model ?? OPENAI_MODEL,
       messages: [{ role: "user", content: prompt(task) }],
       functions: Object.values(actions),
     })
