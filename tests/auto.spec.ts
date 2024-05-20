@@ -34,7 +34,7 @@ test("executes action", async ({ page }) => {
 test("executes click", async ({ page }) => {
   await page.goto("/");
 
-  await auto("Click the button until the counter value is equal to 2", {
+  await auto("Click the 'Click Me' button until the counter value is equal to 2.", {
     page,
     test,
   });

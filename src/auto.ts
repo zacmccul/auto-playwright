@@ -56,8 +56,7 @@ async function runTask(
     snapshot: await getSnapshot(page),
     options:  {
           model: options?.model ?? OPENAI_MODEL,
-          debug: options?.debug ?? true,
-          //openaiApiKey: options?.openaiApiKey ?? OPENAI_API_KEY,
+          debug: options?.debug ?? true
         }
   });
   return result;

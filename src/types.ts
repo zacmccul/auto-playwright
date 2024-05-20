@@ -5,10 +5,9 @@ export { type Page } from "@playwright/test";
 export type Test = TestType<any, any>;
 
 export type StepOptions = {
-  debug?: boolean;
-  model?: string;
-  //openaiApiKey?: string;
-};
+  debug?: boolean
+  model?: string
+}
 
 export type TaskMessage = {
   task: string;
